@@ -1,50 +1,56 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import { Box } from '@mui/system';
-import { Fab } from '@mui/material';
+import { useAppDispatch, useAppSelector } from '../store/hooks';
+import { updateUser } from '../store/modules/UserSlice';
+import { addNewTask } from '../store/modules/UserLoggedSlice';
 import NoteType from '../types/NoteType';
-import { useAppDispatch } from '../store/hooks';
-import { addNote } from '../store/modules/NoteSlice';
+
 
 interface ModalInputsProps {
-    title: string;
-    description: string;
     openModal: boolean;
     actionConfirm: () => void;
     actionCancel: () => void;
 }
 
-const ModalInputs: React.FC<ModalInputsProps> = ({ title, description, openModal, actionCancel, actionConfirm }) => {
-    const [noteTitle, setNoteTitle] = useState('');
-    const [noteDescription, setNoteDescription] = useState('');
-    const dispatch = useAppDispatch();
 
+const ModalInputs: React.FC<ModalInputsProps> = ({ openModal, actionCancel, actionConfirm }) => {
+    const dispatch = useAppDispatch();
+    const[note, setNote] = React.useState({} as NoteType);
+    const userLogged = useAppSelector(state => state.userLogged.userLogged);
+
+    useEffect(() =>{
+        dispatch(updateUser({id: userLogged.email, changes: userLogged}));
+    },[userLogged]);
+    
     const handleClose = () => {
         actionCancel();
     };
-
-    const handleConfirm = () => {
-        const newNote: NoteType = {
-            id: Date.now(),
-            note: noteTitle,
-            description: noteDescription,
-        };
-
-        dispatch(addNote(newNote));
-        actionConfirm();
-        setNoteTitle('');
-        setNoteDescription('');
+  
+    const handleChange = (ev: { target: { name: string; value: string } }) => {
+        setNote(state => ({ ...state, [ev.target.name]: ev.target.value }));
     };
+  
+    const handleConfirm = () =>{
+        dispatch(
+            addNewTask({
+                ...note,
+                id: Date.now(),
+                favorite: false
+            })
+        );
+        actionConfirm();
+    };
+  
     return (
         <Box>
             <Dialog open={openModal} onClose={handleClose}>
-                <DialogTitle>{title}</DialogTitle>
+                <DialogTitle>Recados</DialogTitle>
                 <DialogContent>
                     <TextField
                         sx={{
@@ -58,26 +64,28 @@ const ModalInputs: React.FC<ModalInputsProps> = ({ title, description, openModal
                             },
                         }}
                         autoFocus
-                        value={noteTitle}
+                        value={note.note}
                         margin="dense"
                         id="noteTitle"
                         label="Titulo do recado"
                         type={'text'}
                         fullWidth
+                        name='note'
                         variant="standard"
-                        onChange={ev => setNoteTitle(ev.target.value)}
+                        onChange={handleChange}
                     />
                     <TextField
                         autoFocus
-                        value={noteDescription}
+                        value={note.description}
                         margin="dense"
                         id="noteDescription"
                         label="Descrição do recado"
                         type={'text'}
                         fullWidth
+                        name='description'
                         variant="standard"
                         sx={{ hover: 'false' }}
-                        onChange={ev => setNoteDescription(ev.target.value)}
+                        onChange={handleChange}
                     />
                 </DialogContent>
                 <DialogActions>
