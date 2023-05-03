@@ -1,13 +1,10 @@
 import { Box, Button, Grid, TextField, Typography } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import userType from '../types/UserType';
 import { useAppSelector } from '../store/hooks';
 import { useAppDispatch } from '../store/hooks';
-import { useDispatch } from 'react-redux';
-import { selectAllUsers } from '../store/modules/UserSlice';
-import { setuserLogged } from '../store/modules/UserLoggedSlice';
-import salvarLocalStorage from '../store/modules/UserSlice';
+import { addUser, selectAllUsers } from '../store/modules/UserSlice';
+import { setUserLogged } from '../store/modules/UserLoggedSlice';
 
 interface FormProps {
     textButton: string;
@@ -50,67 +47,91 @@ const Form: React.FC<FormProps> = ({ textButton, mode }) => {
         }
     }, [email, password, repassword, mode]);
 
+    useEffect(() => {
+        localStorage.setItem('listaUsuarios', JSON.stringify(users));
+    }, [users]);
+
     function handleSubmit(evento: React.FormEvent<HTMLFormElement>) {
         evento.preventDefault();
 
         if (mode === 'login') {
-            const user: userType = {
-                email,
-                password,
-                notes: []
-            };
 
-            const userExist = users.find((value) => value.email === user.email);
+            const userExist = users.find((value) => value.email === email &&
+            value.password === password) ;
 
             if(!userExist){
                 alert('usuario ou senha incorretos');
                 return;
             }
 
-            dispatch(setuserLogged({email: userExist.email, password: userExist.password, notes: userExist.notes}));
+            dispatch(setUserLogged({email: userExist.email, password: userExist.password, notes: userExist.notes}));
             navigate('/notes');
+        } else {
+            const newUser = {
+                email,
+                password,
+                notes: [],
+            };
+
+            const retorno = users.some((value) => value.email === newUser.email);
+            if (retorno) {
+                alert('eamil ja cadastrado');
+                return;
+            }
+            dispatch(addUser(newUser));
         }
     }
 
     return (
-        <Box component='form' marginTop={2} width='100%' height='100%'>
+        <Box component='form' marginTop={2} width='100%' height='100%' onSubmit={(ev) => handleSubmit(ev)}>
 
             <TextField
-                margin="normal"
-                type="email"
-                id="email"
-                label="Email"
+                error={errorEmail}
+                helperText={errorEmail ? 'E-mail inválido' : ''}
                 value={email}
-                onChange={e => {
-                    setEmail(e.target.value);
-                }}
+                variant="outlined"
+                type="email"
                 required
+                id="email"
+                label="E-mail"
                 fullWidth
+                onChange={(ev) => setEmail(ev.target.value)}
                 sx={{my: '5px'}}
             />
 
             <TextField 
-                margin="normal"
+                error={errorPassword}
+                helperText={
+                    errorPassword
+                        ? 'Senha deve conter ao menos 6 caracteres'
+                        : ''
+                }
+                value={password}
+                variant="outlined"
                 type="password"
+                required
                 id="password"
                 label="Senha"
-                value={password}
-                onChange={e => setPassword(e.target.value)}
-                required
                 fullWidth
+                onChange={(ev) => setPassword(ev.target.value)}
                 sx={{my: '5px'}}
             />
 
             {mode === 'create' && (
                 <TextField 
+                    error={errorRepassword}
+                    helperText={
+                        errorRepassword ? 'As senhas não coincidem' : ''
+                    }
+                    value={repassword}
                     margin="normal"
+                    variant="outlined"
                     type="password"
-                    id="repassword"
-                    label="Repetir a senha"
-                    onChange={e => setRepassword(e.target.value)}
-                    helperText={errorRepassword ? 'As senhas não são iguais' : ''}
                     required
+                    id="repassword"
+                    label="Repetir Senha"
                     fullWidth
+                    onChange={(ev) => setRepassword(ev.target.value)}
                     sx={{my: '5px'}}
                 />
             )}
@@ -119,7 +140,8 @@ const Form: React.FC<FormProps> = ({ textButton, mode }) => {
                 <Grid item xs={12} textAlign='center'>
                     <Button 
                         type='submit' 
-                        variant='contained' 
+                        variant='contained'
+                        disabled={disabled}
                         sx={{
                             my: 3,
                             padding: '10px',
@@ -137,7 +159,6 @@ const Form: React.FC<FormProps> = ({ textButton, mode }) => {
                         {textButton}
                     </Button>
                 </Grid>
-
 
                 <Grid item xs={12} textAlign="end">
                     {mode === 'login' ? (

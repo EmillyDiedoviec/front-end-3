@@ -2,7 +2,7 @@ type NoteType = {
     id: number;
     note: string;
     description: string;
-/*     favorite: boolean; */
+    favorite: boolean;
 };
 
 export default NoteType;

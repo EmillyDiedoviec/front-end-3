@@ -1,9 +1,9 @@
 import NoteType from './NoteType';
 
-type userType = {
+type UserType = {
     email: string;
     password: string;
     notes: NoteType[];
 };
 
-export default userType;
+export default UserType;

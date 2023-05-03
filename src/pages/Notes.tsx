@@ -7,22 +7,45 @@ import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
 import * as React from 'react';
 import ModalInputs from '../components/ModalInput';
-import { useAppSelector } from '../store/hooks';
-import { SelectAllNotes } from '../store/modules/NoteSlice';
+import { useAppDispatch, useAppSelector } from '../store/hooks';
+import { useState } from 'react';
+import { updateTask } from '../store/modules/UserLoggedSlice';
+
 
 const Notes: React.FC = () => {
+    const [favorite, setFavorite] = useState(false);
     const [openAdd, setOpenAdd] = React.useState(false);
-    const listNotes = useAppSelector(SelectAllNotes);
+    const listNotes = useAppSelector(state => state.userLogged.userLogged.notes);
+    const dispatch = useAppDispatch();
+
+    const listFavorites = listNotes.filter((item) => item.favorite === true);
+
+    function page(){
+        setFavorite(!favorite);
+    }
 
     const handleClose = () => {
         setOpenAdd(false);
     };
+
     const addNotes = () => {
         console.log('funcionando');
         setOpenAdd(false);
     };
+    
     const openModalImput = () => {
         setOpenAdd(true);
+    };
+
+    const taskFavorite = (id: number) => {
+        const task = listNotes.find((item) => item.id === id);
+        if (task) {
+            dispatch(
+                updateTask({
+                    ...task, favorite: !task.favorite
+                }),
+            );
+        }
     };
 
     return (
@@ -80,8 +103,6 @@ const Notes: React.FC = () => {
                 {/* <AddIcon /> */}
             </Fab>
             <ModalInputs
-                title="Adicionar"
-                description="Escreva o recado aqui bçabçla"
                 openModal={openAdd}
                 actionConfirm={addNotes}
                 actionCancel={handleClose}

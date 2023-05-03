@@ -7,7 +7,7 @@ import storage from 'redux-persist/lib/storage';
 import rootReducer from './modules/rootReducer';
 
 const persistConfig = {
-    key: 'entity-adapter-reactjs',
+    key: 'adapter-reactjs',
     storage,
 };
 
