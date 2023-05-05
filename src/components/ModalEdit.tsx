@@ -43,16 +43,6 @@ const ModalEdit: React.FC<ModalEditProps> = ({ openModal, actionCancel, actionCo
                 <DialogTitle>Recados</DialogTitle>
                 <DialogContent>
                     <TextField
-                        sx={{
-                            '& label.Mui-focused': {
-                                color: '#222',
-                            },
-                            ' & .MuiInputBase-input': {
-                                '&.Mui-focused fieldset': {
-                                    borderColor: '#222',
-                                },
-                            },
-                        }}
                         autoFocus
                         value={noteEdit.note}
                         margin="dense"
@@ -64,7 +54,6 @@ const ModalEdit: React.FC<ModalEditProps> = ({ openModal, actionCancel, actionCo
                         onChange={e => setNoteEdit(state => ({ ...state, note: e.target.value}))}
                     />
                     <TextField
-                        autoFocus
                         value={noteEdit.description}
                         margin="dense"
                         id="noteDescription"
@@ -72,15 +61,18 @@ const ModalEdit: React.FC<ModalEditProps> = ({ openModal, actionCancel, actionCo
                         type={'text'}
                         fullWidth
                         variant="standard"
-                        sx={{ hover: 'false' }}
                         onChange={e => setNoteEdit(state => ({ ...state, description: e.target.value}))}
                     />
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={handleClose} sx={{ color: '#222' }}>
+                    <Button onClick={handleClose} sx={{ color: '#222', '&:hover': {
+                        backgroundColor: '#92cb6c',
+                        boxShadow: 'none',}}}>
                             Cancelar
                     </Button>
-                    <Button onClick={handleConfirm} sx={{ color: '#222' }}>
+                    <Button onClick={handleConfirm} sx={{ color: '#222', '&:hover': {
+                        backgroundColor: '#92cb6c',
+                        boxShadow: 'none',}}}>
                             Confirmar
                     </Button>
                 </DialogActions>

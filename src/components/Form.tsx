@@ -40,7 +40,7 @@ const Form: React.FC<FormProps> = ({ textButton, mode }) => {
 
             const repasswordValid = password === repassword;
             if(repassword.length > 0) {
-                setErrorPassword(!repasswordValid);
+                setErrorRepassword(!repasswordValid);
             }
 
             setDisabled(!(emailValid && passwordValid && repasswordValid));

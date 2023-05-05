@@ -1,6 +1,5 @@
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
-import FavoriteIcon from '@mui/icons-material/Favorite';
 import { Grid, Box, Typography, IconButton, Fab } from '@mui/material';
 import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
@@ -16,21 +15,12 @@ import AddIcon from '@mui/icons-material/Add';
 
 
 const Notes: React.FC = () => {
-    const [favorite, setFavorite] = useState(false);
-    const [openAdd, setOpenAdd] = React.useState(false);
-    const [openModalEdit, setOpenModalEdit] = React.useState(false);
+    const [openAdd, setOpenAdd] = useState(false);
+    const [openModalEdit, setOpenModalEdit] = useState(false);
     const listNotes = useAppSelector(state => state.userLogged.user.notes);
-    const [noteEdit, setNoteEdit] = React.useState<NoteType>({} as NoteType);
+    const [noteEdit, setNoteEdit] = useState<NoteType>({} as NoteType);
 
     const dispatch = useAppDispatch();
-
-    const listFavorites = listNotes.filter((item) => item.favorite === true);
-
-    function page(){
-        setFavorite(!favorite);
-    }
-
-
 
     const handleClose = () => {
         setOpenAdd(false);
@@ -61,40 +51,38 @@ const Notes: React.FC = () => {
 
     return (
         <Grid container sx={{ width: '100%', height: '100vh' }}>
-            <Box width="100%" paddingTop="1rem" bgcolor="#65864f">
+            <Box width="100%" paddingTop="5rem" bgcolor="#65864f">
                 <Grid container width="100%">
                     {listNotes.map(note => (
                         <Grid item xs={12} sm={6} md={3} key={note?.id} display="flex" justifyContent='center' flexDirection="row">
                             <Card
                                 sx={{
-                                    width: '300px',
-                                    height: '150px',
+                                    width: '310px',
+                                    height: '180px',
                                     marginY: '25px',
-                                    marginX: '15px'
+                                    marginX: '15px',
+                                    border: '8px double #65864f'
                                 }}
                             >
                                 <CardContent>
-                                    <Typography gutterBottom variant="h5" component="div">
+                                    <Typography gutterBottom variant="h5" component="div" sx={{ wordWrap: 'break-word' }}>
                                         {note.note}
                                     </Typography>
 
-                                    <Typography variant="body2" color="text.secondary" noWrap>
+                                    <Typography variant="body2" color="text.secondary" sx={{ wordWrap: 'break-word' }}>
                                         {note.description}
                                     </Typography>
                                 </CardContent>
-                                <CardActions sx={{ display: 'flex' }}>
-                                    <IconButton aria-label="favorite">
-                                        <FavoriteIcon />
-                                    </IconButton>
+                                <CardActions sx={{ display: 'flex', marginTop: '-10px'}}>
                                     <IconButton 
                                         aria-label="edit"
                                         onClick={() => handleEdit(note)}>
-                                        <EditIcon />
+                                        <EditIcon sx={{ color: '#424242'}} />
                                     </IconButton>
                                     <IconButton 
                                         aria-label="delete"
                                         onClick={() => handleDelete(note)}>
-                                        <DeleteIcon />
+                                        <DeleteIcon sx={{ color: '#e40101'}} />
                                     </IconButton>
                                 </CardActions>
                             </Card>
