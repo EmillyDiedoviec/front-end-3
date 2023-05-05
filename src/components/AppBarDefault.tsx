@@ -36,7 +36,7 @@ const ResponsiveAppBar: React.FC = () => {
     };
 
     const handleCloseUserMenu = () => {
-        navigate('/');
+        navigate('/login');
     };
 
     const handleClose = () => {
@@ -44,7 +44,7 @@ const ResponsiveAppBar: React.FC = () => {
     };
 
     return (
-        <AppBar position="static" sx={{ backgroundColor: '#322e33' }}>
+        <AppBar position="static" sx={{ backgroundColor: '#222122'}}>
             <Container maxWidth="xl">
                 <Toolbar disableGutters>
                     <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>

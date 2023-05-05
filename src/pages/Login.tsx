@@ -1,7 +1,7 @@
 import { Grid,} from '@mui/material';
 import React from 'react';
 import FingerprintOutlinedIcon from '@mui/icons-material/FingerprintOutlined';
-import RegisterCont from '../components/RegisterCont';
+import RegisterCont from '../components/RegisterCard';
 
 const Login: React.FC = () => {
     return (

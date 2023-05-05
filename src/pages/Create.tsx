@@ -2,7 +2,7 @@ import { Grid } from '@mui/material';
 import React from 'react';
 
 import PersonAddAlt1OutlinedIcon from '@mui/icons-material/PersonAddAlt1Outlined';
-import RegisterCont from '../components/RegisterCont';
+import RegisterCont from '../components/RegisterCard';
 
 
 const Create: React.FC = () => {

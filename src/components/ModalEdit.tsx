@@ -8,20 +8,20 @@ import DialogTitle from '@mui/material/DialogTitle';
 import { Box } from '@mui/system';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { updateUser } from '../store/modules/UserSlice';
-import { addNewTask } from '../store/modules/UserLoggedSlice';
+import { updateTask } from '../store/modules/UserLoggedSlice';
 import NoteType from '../types/NoteType';
 
 
-interface ModalInputsProps {
+interface ModalEditProps {
     openModal: boolean;
     actionConfirm: () => void;
     actionCancel: () => void;
+    note: NoteType;
 }
 
-
-const ModalInputs: React.FC<ModalInputsProps> = ({ openModal, actionCancel, actionConfirm }) => {
+const ModalEdit: React.FC<ModalEditProps> = ({ openModal, actionCancel, actionConfirm, note }) => {
     const dispatch = useAppDispatch();
-    const [note, setNote] = useState({} as NoteType);
+    const[noteEdit, setNoteEdit] = useState(note);
     const userLogged = useAppSelector(state => state.userLogged.user);
 
     useEffect(() => {
@@ -32,18 +32,8 @@ const ModalInputs: React.FC<ModalInputsProps> = ({ openModal, actionCancel, acti
         actionCancel();
     };
 
-    const handleChange = (ev: { target: { name: string; value: string } }) => {
-        setNote(state => ({ ...state, [ev.target.name]: ev.target.value }));
-    };
-
     const handleConfirm = () => {
-        dispatch(
-            addNewTask({
-                ...note,
-                id: Date.now()
-            })
-        );
-
+        dispatch(updateTask(noteEdit));
         actionConfirm();
     };
 
@@ -64,28 +54,26 @@ const ModalInputs: React.FC<ModalInputsProps> = ({ openModal, actionCancel, acti
                             },
                         }}
                         autoFocus
-                        value={note.note}
+                        value={noteEdit.note}
                         margin="dense"
                         id="noteTitle"
                         label="Titulo do recado"
                         type={'text'}
                         fullWidth
-                        name='note'
                         variant="standard"
-                        onChange={handleChange}
+                        onChange={e => setNoteEdit(state => ({ ...state, note: e.target.value}))}
                     />
                     <TextField
                         autoFocus
-                        value={note.description}
+                        value={noteEdit.description}
                         margin="dense"
                         id="noteDescription"
                         label="Descrição do recado"
                         type={'text'}
                         fullWidth
-                        name='description'
                         variant="standard"
                         sx={{ hover: 'false' }}
-                        onChange={handleChange}
+                        onChange={e => setNoteEdit(state => ({ ...state, description: e.target.value}))}
                     />
                 </DialogContent>
                 <DialogActions>
@@ -101,4 +89,4 @@ const ModalInputs: React.FC<ModalInputsProps> = ({ openModal, actionCancel, acti
     );
 };
 
-export default ModalInputs;
+export default ModalEdit;

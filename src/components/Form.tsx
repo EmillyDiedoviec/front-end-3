@@ -79,6 +79,7 @@ const Form: React.FC<FormProps> = ({ textButton, mode }) => {
                 return;
             }
             dispatch(addUser(newUser));
+            navigate('/login');
         }
     }
 
