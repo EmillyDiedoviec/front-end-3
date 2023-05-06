@@ -12,6 +12,7 @@ import { deleteTask } from '../store/modules/UserLoggedSlice';
 import NoteType from '../types/NoteType';
 import ModalEdit from '../components/ModalEdit';
 import AddIcon from '@mui/icons-material/Add';
+import { useNavigate } from 'react-router-dom';
 
 
 const Notes: React.FC = () => {
@@ -19,8 +20,17 @@ const Notes: React.FC = () => {
     const [openModalEdit, setOpenModalEdit] = useState(false);
     const listNotes = useAppSelector(state => state.userLogged.user.notes);
     const [noteEdit, setNoteEdit] = useState<NoteType>({} as NoteType);
+    const userLogged = useAppSelector(state => state.userLogged.user.email);
+
 
     const dispatch = useAppDispatch();
+    const navigate = useNavigate();
+
+    React.useEffect(() => {
+        if (!userLogged) {
+            navigate('/login');
+        }
+    }, []);
 
     const handleClose = () => {
         setOpenAdd(false);

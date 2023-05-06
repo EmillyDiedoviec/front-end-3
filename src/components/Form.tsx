@@ -5,6 +5,7 @@ import { useAppSelector } from '../store/hooks';
 import { useAppDispatch } from '../store/hooks';
 import { addUser, selectAllUsers } from '../store/modules/UserSlice';
 import { setUserLogged } from '../store/modules/UserLoggedSlice';
+import Alerts from './Alerts';
 
 interface FormProps {
     textButton: string;
@@ -15,7 +16,6 @@ const Form: React.FC<FormProps> = ({ textButton, mode }) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [repassword, setRepassword] = useState('');
-
     const [errorEmail, setErrorEmail] = useState(false);
     const [errorPassword, setErrorPassword] = useState(false);
     const [errorRepassword, setErrorRepassword] = useState(false);
@@ -24,6 +24,10 @@ const Form: React.FC<FormProps> = ({ textButton, mode }) => {
     const users = useAppSelector(selectAllUsers);
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
+
+    const [alertSucess, setAlertSucess] = useState(false);
+    const [alertError, setAlertError] = useState(false);
+    const [alertErrorExist, setAlertErrorExist] = useState(false);
 
     useEffect(() => {
         if (mode === 'create') {
@@ -60,12 +64,16 @@ const Form: React.FC<FormProps> = ({ textButton, mode }) => {
             value.password === password) ;
 
             if(!userExist){
-                alert('usuario ou senha incorretos');
+                setAlertError(true);
+                setTimeout(() => {
+                    setAlertError(false);
+                }, 4000);
                 return;
             }
 
             dispatch(setUserLogged({email: userExist.email, password: userExist.password, notes: userExist.notes}));
             navigate('/notes');
+
         } else {
             const newUser = {
                 email,
@@ -75,11 +83,23 @@ const Form: React.FC<FormProps> = ({ textButton, mode }) => {
 
             const retorno = users.some((value) => value.email === newUser.email);
             if (retorno) {
-                alert('eamil ja cadastrado');
+                setAlertErrorExist(true);
+                setTimeout(() => {
+                    setAlertErrorExist(false);
+                }, 4000);
+                
                 return;
             }
+
             dispatch(addUser(newUser));
-            navigate('/login');
+            setAlertSucess(true);
+            setTimeout(() => {
+                setAlertSucess(false);
+            }, 4000);
+
+            setTimeout(() => {
+                navigate('/login');
+            }, 4000);
         }
     }
 
@@ -177,6 +197,20 @@ const Form: React.FC<FormProps> = ({ textButton, mode }) => {
                     )}
                 </Grid>
             </Grid>
+            <Box sx={{position: 'absolute', top: '10px', right: '10px'}}>
+                {alertSucess && (
+                    <Alerts onClose={() => setAlertSucess(false)} text='Conta criada com sucesso!' title='Sucesso!!!' type='success' />
+                )}
+
+                {alertError && (
+                    <Alerts onClose={() => setAlertError(false)} text='E-mail ou senha incorretos!' title='!ERRO!' type='error' />
+
+                )}
+
+                {alertErrorExist && (
+                    <Alerts onClose={() => setAlertErrorExist(false)} text='E-mail já cadastrado!' title='!ERRO!' type='error' />
+                )}
+            </Box>
         </Box>
     );
 };
