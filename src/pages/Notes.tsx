@@ -1,6 +1,6 @@
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
-import { Grid, Box, Typography, IconButton, Fab } from '@mui/material';
+import { Grid, Box, Typography, IconButton, Fab, Dialog, DialogTitle, DialogContent, DialogActions, Button } from '@mui/material';
 import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
@@ -21,6 +21,8 @@ const Notes: React.FC = () => {
     const listNotes = useAppSelector(state => state.userLogged.user.notes);
     const [noteEdit, setNoteEdit] = useState<NoteType>({} as NoteType);
     const userLogged = useAppSelector(state => state.userLogged.user.email);
+    const [deleteConfirm, setDeleteConfirm] = useState(false);
+    const [thisNote, setThisNote] = useState<NoteType | null>(null);
 
 
     const dispatch = useAppDispatch();
@@ -43,7 +45,21 @@ const Notes: React.FC = () => {
     };
 
     const handleDelete = (item: NoteType) => {
-        dispatch(deleteTask(item.id));
+        setThisNote(item);
+        setDeleteConfirm(true);
+    };
+
+    const handleDeleteConfirm = () => {
+        if (thisNote) {
+            dispatch(deleteTask(thisNote.id));
+            setDeleteConfirm(false);
+            setThisNote(null);
+        }
+    };
+
+    const handleDeleteCancel = () => {
+        setThisNote(null);
+        setDeleteConfirm(false);
     };
 
     const handleEdit = (item: NoteType) => {
@@ -133,6 +149,26 @@ const Notes: React.FC = () => {
                 actionConfirm={addNotes}
                 actionCancel={handleClose}
             />
+
+            <Dialog open={deleteConfirm} onClose={handleDeleteCancel}>
+                <DialogTitle>Confirmar exclusão</DialogTitle>
+                <DialogContent>Deseja mesmo excluir o recado {thisNote?.note}?</DialogContent>
+                <DialogActions>
+                    <Button 
+                        onClick={handleDeleteCancel} 
+                        sx={{ color: '#222', '&:hover': {
+                            backgroundColor: '#92cb6c',
+                            boxShadow: 'none',}}}>
+                                Cancelar
+                    </Button>
+                    <Button onClick={handleDeleteConfirm} 
+                        sx={{ color:'#cb1f1f', '&:hover': { color: '#000000',
+                            backgroundColor: '#cb1f1f',
+                            boxShadow: 'none',}}}>
+                                Excluir
+                    </Button>
+                </DialogActions>
+            </Dialog>
         </Grid>
     );
 };
